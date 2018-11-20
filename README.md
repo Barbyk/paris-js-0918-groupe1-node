@@ -14,10 +14,12 @@ Dans un premier temps vous pourrez placer toutes vos routes dans ce fichier, par
 
 ## Branches
 
-Pensez à faire un ```
+Pensez à faire un 
+```
 git checkout -b dev 
 git push origin dev
-``` pour initialiser votre `dev`. 
+```
+pour initialiser votre `dev`. 
 
 Pensez à créer une branche `database` avec vos premiers fichiers :
 * app.js 
