@@ -1,5 +1,4 @@
 # paris-js-0918-groupe1-node
-
 ## BDD
 
 Pensez à conserver sur Github votre dump de base de données.
@@ -14,6 +13,11 @@ Pensez également à faire votre fichier avec votre connexion de base de donnée
 Dans un premier temps vous pourrez placer toutes vos routes dans ce fichier, par la suite il faudra les diviser en plusieurs fichier ; vous pouvez voir un exemple [ici](http://expressjs.com/en/guide/routing.html) dans la section `express.Router`. 
 
 ## Branches
+
+Pensez à faire un ```
+git checkout -b dev 
+git push origin dev
+``` pour initialiser votre `dev`. 
 
 Pensez à créer une branche `database` avec vos premiers fichiers :
 * app.js 
