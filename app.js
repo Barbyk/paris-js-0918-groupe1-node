@@ -4,7 +4,6 @@ const port = 3000;
 const connection = require('./conf');
 
 app.get('/asso', (req, res) => {
-
     // connection à la base de données, et sélection des associations
     connection.query('SELECT * from Associations', (err, results) => {
   
