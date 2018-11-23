@@ -30,32 +30,49 @@ app.get('/assoprofil', (req, res) => {
   });
 });
 
+app.post('/assoprofil',(req,res)=>{
 
-app.post('/assoprofil', (req, res) => {
-  const { name, description, address, logo, social_network_url_1, social_network_url_2, social_network_url_3, phone_number, web_site, mail, is_active, departements_id } = req.body;
+  const {actions,name, description, address, logo, social_network_url_1, 
+    social_network_url_2, social_network_url_3, phone_number, web_site,
+     mail, is_visible, departements_id} = req.body;
 
-  connection.query(`INSERT INTO assoprofil VALUES (null,?,?,?,?,?,?,?,?,?,?,?,?);`, [name, description, address, logo, social_network_url_1, social_network_url_2, social_network_url_3, phone_number, web_site, mail, is_active, departements_id], (err, results) => {
+    // utilisation d'une promesse pour gérer la synchronisation entre les 2 requetes INSERT INTO
+  new Promise((resolve, reject) => {
+    connection.query(`INSERT INTO assoprofil VALUES (null,?,?,?,?,?,?,?,?,?,?,?,?);`, [name, description, address, logo, social_network_url_1, social_network_url_2, social_network_url_3, phone_number, web_site, mail, is_visible, departements_id], (err, results) => {
 
-    if (err) {
+      if (err) {
 
-      // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-      res.status(500).send('Erreur lors de la récupération des associations');
-    } else {
+        // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+        res.status(500).send('Erreur lors de l\'insertion des associations');
+      } else {
 
-      // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
-      res.json(results);
-      console.log(`${name} INSERTED`)
+        // On retourne l'id du nouvel asso, pour l'utiliser dans la seconde requete
+        resolve(results)
+      }
+
+    })
+  }).then((results) => {  // Les actions ci-dessous ne sont executes qu'apres le 1er INSERT INTO
+
+    for (let i = 0; i < actions.length; i++) {
+      connection.query(`INSERT INTO associations_has_actions VALUES (?,?);`, [results.insertId, actions[i].actions_id], (err, results) => {
+
+        if (err) {
+
+          // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+          res.status(500).send('Erreur lors de l\'insertion des associations avec les actions');
+        }
+      })
     }
-
-  })
+    res.send(`${name} with actions INSERTED`)
+  }
+  )
 
 });
-
 
 app.get('/assoprofil/:id', (req, res) => {
 
   // connection à la base de données, et sélection des associations
-  connection.query('SELECT * from assoprofil WHERE id=?', req.params.id, (err, results) => {
+  connection.query('SELECT * from assoprofil WHERE id=?',req.params.id, (err, results) => {
 
     if (err) {
 
@@ -71,24 +88,18 @@ app.get('/assoprofil/:id', (req, res) => {
 
 
 app.put('/assoprofil/:id', (req, res) => {
-  const { id } = req.params;
-  const { name, description, address, logo, social_network_url_1,
-    social_network_url_2, social_network_url_3, phone_number, web_site,
-    mail, is_active, departements_id } = req.body;
+  const  { id }  = req.params;     
+  const { name, description, address, logo, social_network_url_1, 
+    social_network_url_2, social_network_url_3, phone_number, web_site, 
+    mail, is_visible, departements_id } = req.body;
 
-  connection.query(`UPDATE assoprofil SET name = ?, description =?, address =?, logo =?, social_network_url_1 =?, social_network_url_2 =?, social_network_url_3 =?, phone_number =?, web_site =?, mail =?, is_active =?, departements_id=? WHERE id = ?`, [name, description, address, logo, social_network_url_1, social_network_url_2, social_network_url_3, phone_number, web_site, mail, is_active, departements_id, id],
-    (err, results) => {
-      if (err) {
-        // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-        res.status(500).send("Erreur lors de la modification du lieux");
-
-      } else {
-        // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
-        res.json(results);
-      }
-    }
-  );
+  connection.query(`UPDATE assoprofil SET name = ? WHERE id = ?`, [name, description, address, logo, social_network_url_1, social_network_url_2, social_network_url_3, phone_number, web_site, mail, is_visible, departements_id], err => {
+      if (err) throw err;
+      console.log(`you modify row number ${id} for ${name}`);
+  });
+  
 });
+
 //route assoProfil
 
 // route Action
