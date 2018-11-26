@@ -132,12 +132,11 @@ app.get('/locations', (req, res) => {
 
 app.post('/locations', (req, res) => {
   const { name, longitude, latitude, image_url, is_active, departements_id, } = req.body;
-  console.log(name, longitude, latitude, image_url, is_active, departements_id);
 
   if (!name) return;//nb demander quel champ est obligatoire 
   connection.query(
     'INSERT INTO locations (name, longitude, latitude, image_url,is_active , departements_id) VALUES(?,?,?,?,?,?)',
-    [name, longitude, latitude, image_url, departements_id],
+    [name, longitude, latitude, image_url,is_active, departements_id],
     (err, result) => {
       if (err) {
         res.status(500).send('Erreur lors de la récuperation des lieux')
@@ -335,7 +334,6 @@ app.get('/news', (req, res) => {
 
 app.post('/news', (req, res) => {
   const { img_url, text, title, date, is_active,/* users_id */ } = req.body;
-  console.log(img_url, text, title, date, is_active);
 
   if (!title) return;//nb demander quel champ est obligatoire 
   connection.query(
