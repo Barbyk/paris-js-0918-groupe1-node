@@ -1,7 +1,7 @@
 
 const express = require("express");
 const app = express();
-const port = 3029;
+const port = 3002;
 const connection = require("./conf");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -16,7 +16,7 @@ app.use(cors());
 app.get('/assoprofil', (req, res) => {
 
   // connection à la base de données, et sélection des associations
-  connection.query('SELECT * from assoprofil', (err, results) => {
+  connection.query('SELECT * from assoprofil WHERE is_visible = 1', (err, results) => {
 
     if (err) {
 
@@ -89,13 +89,13 @@ app.get('/assoprofil/:id', (req, res) => {
 
 app.put('/assoprofil/:id', (req, res) => {
   const  { id }  = req.params;     
-  const { name, description, address, logo, social_network_url_1, 
-    social_network_url_2, social_network_url_3, phone_number, web_site, 
-    mail, is_visible, departements_id } = req.body;
+  const formData = req.body;
 
-  connection.query(`UPDATE assoprofil SET name = ? WHERE id = ?`, [name, description, address, logo, social_network_url_1, social_network_url_2, social_network_url_3, phone_number, web_site, mail, is_visible, departements_id], err => {
-      if (err) throw err;
-      console.log(`you modify row number ${id} for ${name}`);
+  connection.query(`UPDATE assoprofil SET ? WHERE id = ?`, [formData,id], err => {
+      if (err){
+      res.send(err);
+      console.log("erreur")}
+      else console.log(`you modify row number ${id} for ${formData.name}`);
   });
   
 });
@@ -137,7 +137,7 @@ app.post('/locations', (req, res) => {
   if (!name) return;//nb demander quel champ est obligatoire 
   connection.query(
     'INSERT INTO locations (name, longitude, latitude, image_url,is_active , departements_id) VALUES(?,?,?,?,?,?)',
-    [name, longitude, latitude, image_url, departements_id],
+    [name, longitude, latitude, image_url,departements_id],
     (err, result) => {
       if (err) {
         res.status(500).send('Erreur lors de la récuperation des lieux')
@@ -234,7 +234,8 @@ app.post("/events", (req, res) => {
     ],
     (err, results) => {
       if (err) {
-        res.status(500).send("Erreur lors de l'insertion des événements");
+        //res.status(500).send("Erreur lors de l'insertion des événements");
+        res.send(err)
       } else {
         console.log(`INSERTED`);
         res.json(results);
@@ -343,7 +344,8 @@ app.post('/news', (req, res) => {
     [img_url, text, title, date, is_active,/* users_id */],
     (err, result) => {
       if (err) {
-        res.status(500).send('Erreur lors de la récuperation des news')
+        //res.status(500).send('Erreur lors de la récuperation des news')
+        res.send(err)
       } else {
         res.json(result)
       }
