@@ -54,7 +54,7 @@ app.post('/assoprofil',(req,res)=>{
   }).then((results) => {  // Les actions ci-dessous ne sont executes qu'apres le 1er INSERT INTO
 
     for (let i = 0; i < actions.length; i++) {
-      connection.query(`INSERT INTO associations_has_actions VALUES (?,?);`, [results.insertId, actions[i].actions_id], (err, results) => {
+      connection.query(`INSERT INTO associations_has_actions VALUES (?,?);`, [results.insertId, actions[i]], (err, results) => {
 
         if (err) {
 
@@ -92,9 +92,8 @@ app.put('/assoprofil/:id', (req, res) => {
   const formData = req.body;
 
   connection.query(`UPDATE assoprofil SET ? WHERE id = ?`, [formData,id], err => {
-      if (err){
-      res.send(err);
-      console.log("erreur")}
+      if (err)
+        res.status(500).send('Erreur lors de la mise a jour des associations');
       else console.log(`you modify row number ${id} for ${formData.name}`);
   });
   
@@ -344,8 +343,7 @@ app.post('/news', (req, res) => {
     [img_url, text, title, date, is_active,/* users_id */],
     (err, result) => {
       if (err) {
-        //res.status(500).send('Erreur lors de la récuperation des news')
-        res.send(err)
+        res.status(500).send('Erreur lors de la récuperation des news')
       } else {
         res.json(result)
       }
