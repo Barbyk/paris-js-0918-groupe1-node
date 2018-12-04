@@ -130,18 +130,19 @@ app.get('/locations', (req, res) => {
 });
 
 app.post('/locations', (req, res) => {
-  const { name, longitude, latitude, image_url, is_active, departements_id, } = req.body;
+  const { name, longitude, latitude, img_url, is_active, departements_id } = req.body;
 
-  if (!name) return;//nb demander quel champ est obligatoire 
   connection.query(
-    'INSERT INTO locations (name, longitude, latitude, image_url,is_active , departements_id) VALUES(?,?,?,?,?,?)',
+    'INSERT INTO locations (name, longitude, latitude, img_url,is_active , departements_id) VALUES(?,?,?,?,?,?)',
 
-    [name, longitude, latitude, image_url,is_active, departements_id],
+    [name, longitude, latitude, img_url,is_active, departements_id],
     (err, result) => {
       if (err) {
         res.status(500).send('Erreur lors de la récuperation des lieux')
       } else {
         res.json(result)
+        console.log(result);
+        
       }
     }
   );
@@ -166,22 +167,25 @@ app.get("/locations/:id", (req, res) => {
 
 app.put("/locations/:id", (req, res) => {
   const { id } = req.params;
-  const { name, longitude, latitude, image_url, is_active, departements_id } = req.body;
+  const formData = req.body
 
 
 
   connection.query(
-    `UPDATE locations SET name=?, longitude=?, latitude=?, image_url=? is_active=? WHERE id = ?`,
-    [name, longitude, latitude, image_url, is_active, departements_id, id],
-    (err, results) => {
-      if (err) {
+    `UPDATE locations SET ?  WHERE id = ?`,
+    [formData, id],(err,results) => {
+      if (err){        
+  
         // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
         res.status(500).send("Erreur lors de la modification du lieux");
-
-      } else {
-        // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
-        res.json(results);
       }
+   
+
+         else {
+           res.json(results)
+         }
+        
+        // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.;
     }
   );
 });
