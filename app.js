@@ -1,7 +1,7 @@
 
 const express = require("express");
 const app = express();
-const port = 3002;
+const port = 3030;
 const connection = require("./conf");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -16,7 +16,7 @@ app.use(cors());
 app.get('/assoprofil', (req, res) => {
 
   // connection à la base de données, et sélection des associations
-  connection.query('SELECT * from assoprofil WHERE is_visible = 1', (err, results) => {
+  connection.query('SELECT * from assoprofil WHERE is_active = 1', (err, results) => {
 
     if (err) {
 
@@ -30,15 +30,15 @@ app.get('/assoprofil', (req, res) => {
   });
 });
 
-app.post('/assoprofil',(req,res)=>{
+app.post('/assoprofil', (req, res) => {
 
-  const {actions,name, description, address, logo, social_network_url_1, 
+  const { actions, name, description, address, logo, social_network_url_1,
     social_network_url_2, social_network_url_3, phone_number, web_site,
-     mail, is_visible, departements_id} = req.body;
+    mail, is_active, departements_id } = req.body;
 
-    // utilisation d'une promesse pour gérer la synchronisation entre les 2 requetes INSERT INTO
+  // utilisation d'une promesse pour gérer la synchronisation entre les 2 requetes INSERT INTO
   new Promise((resolve, reject) => {
-    connection.query(`INSERT INTO assoprofil VALUES (null,?,?,?,?,?,?,?,?,?,?,?,?);`, [name, description, address, logo, social_network_url_1, social_network_url_2, social_network_url_3, phone_number, web_site, mail, is_visible, departements_id], (err, results) => {
+    connection.query(`INSERT INTO assoprofil VALUES (null,?,?,?,?,?,?,?,?,?,?,?,?);`, [name, description, address, logo, social_network_url_1, social_network_url_2, social_network_url_3, phone_number, web_site, mail, is_active, departements_id], (err, results) => {
 
       if (err) {
 
@@ -72,7 +72,7 @@ app.post('/assoprofil',(req,res)=>{
 app.get('/assoprofil/:id', (req, res) => {
 
   // connection à la base de données, et sélection des associations
-  connection.query('SELECT * from assoprofil WHERE id=?',req.params.id, (err, results) => {
+  connection.query('SELECT * from assoprofil WHERE id=?', req.params.id, (err, results) => {
 
     if (err) {
 
@@ -88,15 +88,15 @@ app.get('/assoprofil/:id', (req, res) => {
 
 
 app.put('/assoprofil/:id', (req, res) => {
-  const  { id }  = req.params;     
+  const { id } = req.params;
   const formData = req.body;
 
-  connection.query(`UPDATE assoprofil SET ? WHERE id = ?`, [formData,id], err => {
-      if (err)
-        res.status(500).send('Erreur lors de la mise a jour des associations');
-      else console.log(`you modify row number ${id} for ${formData.name}`);
+  connection.query(`UPDATE assoprofil SET ? WHERE id = ?`, [formData, id], err => {
+    if (err)
+      res.status(500).send('Erreur lors de la mise a jour des associations');
+    else console.log(`you modify row number ${id} for ${formData.name}`);
   });
-  
+
 });
 
 //route assoProfil
@@ -136,7 +136,7 @@ app.post('/locations', (req, res) => {
   connection.query(
     'INSERT INTO locations (name, longitude, latitude, image_url,is_active , departements_id) VALUES(?,?,?,?,?,?)',
 
-    [name, longitude, latitude, image_url,is_active, departements_id],
+    [name, longitude, latitude, image_url, is_active, departements_id],
     (err, result) => {
       if (err) {
         res.status(500).send('Erreur lors de la récuperation des lieux')
