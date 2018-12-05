@@ -5,7 +5,7 @@ const connection = require("../conf");
 
 // route Departements
 
-router.get("/departements", (req, res) => {
+router.get("/", (req, res) => {
     // connection à la base de données, et sélection des départements
     connection.query("SELECT * from departements", (err, results) => {
       if (err) {

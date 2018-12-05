@@ -4,7 +4,7 @@ const connection = require("../conf");
 
 //route news
 
-router.get('/news', (req, res) => {
+router.get('/', (req, res) => {
     connection.query("SELECT * FROM news;", (err, results) => {
       if (err) {
         res.status(500).send('Erreur lors de la récuperation des news')
@@ -14,7 +14,7 @@ router.get('/news', (req, res) => {
     })
   });
   
-  router.post('/news', (req, res) => {
+  router.post('/', (req, res) => {
     const { img_url, text, title, date, is_active,/* users_id */ } = req.body;
   
     if (!title) return;//nb demander quel champ est obligatoire 
@@ -31,7 +31,7 @@ router.get('/news', (req, res) => {
     );
   });
   
-  router.get("/news/:id", (req, res) => {
+  router.get("/:id", (req, res) => {
     // connection à la base de données, et sélection des associations
     connection.query(
       "SELECT * from news WHERE id=?",
@@ -48,7 +48,7 @@ router.get('/news', (req, res) => {
     );
   });
   
-  router.put("/news/:id", (req, res) => {
+  router.put("/:id", (req, res) => {
     const { id } = req.params;
     const { img_url, text, title, date, is_active,/* users_id */ } = req.body;
   
