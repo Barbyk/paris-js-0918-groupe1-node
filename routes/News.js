@@ -5,7 +5,7 @@ const connection = require("../conf");
 //route news
 
 router.get('/', (req, res) => {
-    connection.query("SELECT * FROM news;", (err, results) => {
+    connection.query("SELECT * FROM news WHERE is_active=1", (err, results) => {
       if (err) {
         res.status(500).send('Erreur lors de la récuperation des news')
       } else {

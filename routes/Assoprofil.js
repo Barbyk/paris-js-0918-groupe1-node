@@ -20,7 +20,23 @@ router.get('/', (req, res) => {
       }
     });
   });
+  router.get('/:id/actions', (req, res) => {
+
+    // connection à la base de données, et sélection des associations
+    connection.query('select a3.name from associations_has_actions a2, actions a3 where a2.assoprofil_id=? AND a2.actions_id=a3.id',req.params.id, (err, results) => {
   
+      if (err) {
+  
+        // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+        res.status(500).send('Erreur lors de la récupération des associations');
+      } else {
+  
+        // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
+        res.json(results);
+      }
+    });
+  });
+
   router.post('/',(req,res)=>{
   
     const {actions,name, description, address, logo, social_network_url_1, 
