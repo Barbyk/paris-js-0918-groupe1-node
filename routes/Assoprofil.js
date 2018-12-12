@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
   }).then((results1) => {
 
     // connection à la base de données, et sélection des associations
-    connection.query('select a1.id id, JSON_ARRAYAGG(a3.name) actions from assoprofil a1, associations_has_actions a2, actions a3 where a1.id=a2.assoprofil_id and a2.actions_id=a3.id group by ID', (err, results2) => {
+    connection.query('select a1.id id, JSON_ARRAYAGG(a3.id) actions from assoprofil a1, associations_has_actions a2, actions a3 where a1.id=a2.assoprofil_id and a2.actions_id=a3.id group by ID', (err, results2) => {
 
       if (err) {
 
