@@ -154,7 +154,7 @@ router.put('/:id', (req, res) => {
   })
   const p3 = new Promise((resolve, reject) => {
     let query = "";
-    if (!!req.body.actions)
+    if (req.body.actions.length === 0)
       query = `DELETE FROM associations_has_actions WHERE assoprofil_id=?`
     else query = `DELETE FROM associations_has_actions WHERE assoprofil_id=? AND actions_id NOT IN ? `
 
