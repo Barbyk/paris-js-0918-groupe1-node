@@ -111,10 +111,16 @@ router.get('/:id', (req, res) => {
         // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
         res.status(500).send('Erreur lors de la récupération des associations');
       } else {
-
+        const shouldParse = (el) => {
+          if (!Array.isArray(el)){
+            return JSON.parse(el)
+          }else{
+            return el
+          }
+        }
         // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
         const mergedList = results1.concat(results2).reduce((acc, x) => {
-          if (x.actions) x.actions = JSON.parse(x.actions)
+          if (x.actions) x.actions = shouldParse(x.actions)
           acc[x.id] = Object.assign(acc[x.id] || {}, x);
           return acc;
         }, {});
@@ -126,6 +132,55 @@ router.get('/:id', (req, res) => {
   );
 });
 
+// filtré par departement
+router.get('/filterbydept/:id', (req, res) => {
+
+  new Promise((resolve, reject) => {
+
+    // connection à la base de données, et sélection des associations
+    connection.query('SELECT * from assoprofil WHERE departements_id = ?', req.params.id, (err, results) => {
+
+      if (err) {
+
+        // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+        res.status(500).send('Erreur lors de la récupération des associations');
+      } else {
+
+        // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
+        resolve(results);
+      }
+    })
+  }).then((results1) => {
+
+    // connection à la base de données, et sélection des associations
+    connection.query('select a1.id id, JSON_ARRAYAGG(a3.id) actions from assoprofil a1, associations_has_actions a2, actions a3 where a1.id=a2.assoprofil_id and a1.id=? and a2.actions_id=a3.id group by ID', req.params.id, (err, results2) => {
+
+      if (err) {
+
+        // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+        res.status(500).send('Erreur lors de la récupération des associations');
+      } else {
+        const shouldParse = (el) => {
+          if (!Array.isArray(el)){
+            return JSON.parse(el)
+          }else{
+            return el
+          }
+        }
+
+        // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
+        const mergedList = results1.concat(results2).reduce((acc, x) => {
+          if (x.actions) x.actions =  shouldParse(x.actions)
+          acc[x.id] = Object.assign(acc[x.id] || {}, x);
+          return acc;
+        }, {});
+        //console.log(results2)
+        res.json(Object.values(mergedList));
+      }
+    });
+  }
+  );
+});
 
 router.put('/:id', (req, res) => {
   const { id } = req.params;

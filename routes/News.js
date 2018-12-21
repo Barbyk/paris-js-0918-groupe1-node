@@ -3,13 +3,14 @@ const router = express.Router()
 const connection = require("../conf");
 
 //route news
-
 router.get('/', (req, res) => {
     connection.query("SELECT * FROM news WHERE is_active=1", (err, results) => {
       if (err) {
         res.status(500).send('Erreur lors de la récuperation des news')
       } else {
-        res.json(results)
+        res.json(results);
+        console.log(results);
+        
       }
     })
   });
@@ -17,7 +18,7 @@ router.get('/', (req, res) => {
   router.post('/', (req, res) => {
     const { img_url, text, title, date, is_active,/* users_id */ } = req.body;
   
-    if (!title) return;//nb demander quel champ est obligatoire 
+    //if (!title) return;//nb demander quel champ est obligatoire 
     connection.query(
       'INSERT INTO news (img_url,text,title,date,is_active,users_id) VALUES(?,?,?,?,?,1)',
       [img_url, text, title, date, is_active,/* users_id */],
@@ -61,6 +62,9 @@ router.get('/', (req, res) => {
         if (err) {
           // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
           res.status(500).send("Erreur lors de la modification de la news");
+          console.log(err,results);
+          
+          
   
         } else {
           // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
