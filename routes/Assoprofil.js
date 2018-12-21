@@ -111,10 +111,16 @@ router.get('/:id', (req, res) => {
         // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
         res.status(500).send('Erreur lors de la récupération des associations');
       } else {
-
+        const shouldParse = (el) => {
+          if (!Array.isArray(el)){
+            return JSON.parse(el)
+          }else{
+            return el
+          }
+        }
         // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
         const mergedList = results1.concat(results2).reduce((acc, x) => {
-          if (x.actions) x.actions = JSON.parse(x.actions)
+          if (x.actions) x.actions = shouldParse(x.actions)
           acc[x.id] = Object.assign(acc[x.id] || {}, x);
           return acc;
         }, {});
@@ -154,10 +160,17 @@ router.get('/filterbydept/:id', (req, res) => {
         // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
         res.status(500).send('Erreur lors de la récupération des associations');
       } else {
+        const shouldParse = (el) => {
+          if (!Array.isArray(el)){
+            return JSON.parse(el)
+          }else{
+            return el
+          }
+        }
 
         // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
         const mergedList = results1.concat(results2).reduce((acc, x) => {
-          if (x.actions) x.actions = JSON.parse(x.actions)
+          if (x.actions) x.actions =  shouldParse(x.actions)
           acc[x.id] = Object.assign(acc[x.id] || {}, x);
           return acc;
         }, {});
