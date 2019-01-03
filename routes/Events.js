@@ -6,10 +6,23 @@ const connection = require("../conf");
 
 router.get("/", (req, res) => {
     // connection à la base de données, et sélection des associations
-    connection.query("SELECT * from events", (err, results) => {
+    connection.query("SELECT `id`, `title`, `description`, `begin_date` as start, `end_date` as end, `begin_hour`, `end_hour`, `is_active`, `users_id`, `locations_id` FROM `events` WHERE is_active = 1", (err, results) => {
       if (err) {
         // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
-        res.status(500).send("Erreur lors de la récupération des événements");
+        res.json(err);
+      } else {
+        // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
+        res.json(results);
+      }
+    });
+  });
+
+  router.get("/location/:locationsid", (req, res) => {
+    // connection à la base de données, et sélection des associations
+    connection.query("SELECT `id`, `title`, `description`, `begin_date` as start, `end_date` as end, `begin_hour`, `end_hour`, `is_active`, `users_id`, `locations_id` FROM `events` WHERE is_active = 1 AND locations_id = ?", req.params.locationsid, (err, results) => {
+      if (err) {
+        // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+        res.json(err);
       } else {
         // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
         res.json(results);
