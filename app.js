@@ -1,7 +1,7 @@
 
 const express = require("express");
 const app = express();
-const port = 3009;
+const port = 3002;
 const connection = require("./conf");
 const bodyParser = require("body-parser");
 const exjwt = require('express-jwt');
