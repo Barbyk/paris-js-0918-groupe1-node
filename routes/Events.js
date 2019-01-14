@@ -30,6 +30,24 @@ router.get("/", (req, res) => {
     });
   });
   
+  router.post("/multiplelocations", (req, res) => {
+    if (!req.body.id) res.json("[]")
+    else {
+    const ids = req.body.id
+    // connection à la base de données, et sélection des associations
+    connection.query("SELECT `id`, `title`, `description`, `begin_date` as start, `end_date` as end, `begin_hour`, `end_hour`, `is_active`, `users_id`, `locations_id` FROM `events` WHERE is_active = 1 AND locations_id IN (?)", [ids], (err, results) => {
+      if (err) {
+
+        // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+        res.json(err);
+      } else {
+        // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
+        res.json(results);
+      }
+    });
+  }
+  });
+
   // Route pour ajouter des événements
   router.post("/", (req, res) => {
     const {

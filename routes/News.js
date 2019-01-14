@@ -9,8 +9,7 @@ router.get('/', (req, res) => {
         res.status(500).send('Erreur lors de la récuperation des news')
       } else {
         res.json(results);
-        console.log(results);
-        
+       
       }
     })
   });
@@ -62,10 +61,7 @@ router.get('/', (req, res) => {
         if (err) {
           // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
           res.status(500).send("Erreur lors de la modification de la news");
-          console.log(err,results);
-          
-          
-  
+           
         } else {
           // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
           res.json(results);
