@@ -104,7 +104,7 @@ router.get('/:id', (req, res) => {
   }).then((results1) => {
 
     // connection à la base de données, et sélection des associations
-    connection.query('select a1.id id, JSON_ARRAYAGG(a3.id) actions from assoprofil a1, associations_has_actions a2, actions a3 where a1.id IN (SELECT a1.id from assoprofil a1, associations_has_actions a2 WHERE a2.actions_id=? AND a1.id=a2.assoprofil_id AND is_visible = 1) and a1.id=a2.assoprofil_id and a2.actions_id=a3.id group by ID', req.params.id, (err, results2) => {
+    connection.query('select a1.id id, JSON_ARRAYAGG(a3.id) actions from assoprofil a1, associations_has_actions a2, actions a3 where a1.id=? and a1.id=a2.assoprofil_id and a2.actions_id=a3.id group by ID', req.params.id, (err, results2) => {
       if (err) {
 
         // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
