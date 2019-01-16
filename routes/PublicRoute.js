@@ -3,9 +3,91 @@ const router = express.Router()
 const connection = require("../conf");
 
 
-// route Events
 
-router.get("/", (req, res) => {
+router.get('/assoprofil', (req, res) => {
+
+    new Promise((resolve, reject) => {
+  
+      // connection à la base de données, et sélection des associations
+      connection.query('SELECT * from assoprofil WHERE is_visible = 1', (err, results) => {
+  
+        if (err) {
+  
+          // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+          res.status(500).send('Erreur lors de la récupération des associations');
+        } else {
+  
+          // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
+          resolve(results);
+        }
+      })
+    }).then((results1) => {
+  
+      // connection à la base de données, et sélection des associations
+      connection.query('select a1.id id, JSON_ARRAYAGG(a3.id) actions from assoprofil a1, associations_has_actions a2, actions a3 where a1.id=a2.assoprofil_id and a2.actions_id=a3.id group by ID', (err, results2) => {
+  
+        if (err) {
+  
+          // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+          res.status(500).send('Erreur lors de la récupération des associations');
+        } else {
+  
+          // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
+          const mergedList = results1.concat(results2).reduce((acc, x) => {
+            acc[x.id] = Object.assign(acc[x.id] || {}, x);
+            return acc;
+          }, {});
+          res.json(Object.values(mergedList));
+        }
+      });
+    }
+    );
+  });
+  
+
+//route news
+router.get('/news', (req, res) => {
+    connection.query("SELECT * FROM news WHERE is_active=1", (err, results) => {
+      if (err) {
+        res.status(500).send('Erreur lors de la récuperation des news')
+      } else {
+        res.json(results);
+       
+      }
+    })
+  });
+  
+
+  
+  
+  // Fin de route news
+
+  router.get("/actions", (req, res) => {
+    // connection à la base de données, et sélection des départements
+    connection.query("SELECT * from actions", (err, results) => {
+      if (err) {
+        // Si une erreur est survenue, alors on informe l'utilisateur de l'erreur
+        res.status(500).send("Erreur lors de la récupération des actions");
+      } else {
+        // Si tout s'est bien passé, on envoie le résultat de la requête SQL en tant que JSON.
+        res.json(results);
+      }
+    });
+  });
+
+  router.get('/locations', (req, res) => {
+    connection.query("SELECT * FROM locations WHERE is_active=1;", (err, results) => {
+      if (err) {
+        res.status(500).send('Erreur lors de la récuperation des news')
+      } else {
+        res.json(results)
+      }
+    })
+  });
+
+  // route Events
+
+router.get("/events", (req, res) => {
     // connection à la base de données, et sélection des associations
     connection.query("SELECT `id`, `title`, `description`, `begin_date` as start, `end_date` as end, `begin_hour`, `end_hour`, `is_active`, `users_id`, `locations_id` FROM `events` WHERE is_active = 1", (err, results) => {
       if (err) {
@@ -18,7 +100,7 @@ router.get("/", (req, res) => {
     });
   });
 
-  router.get("/location/:locationsid", (req, res) => {
+  router.get("/events/location/:locationsid", (req, res) => {
     // connection à la base de données, et sélection des associations
     connection.query("SELECT `id`, `title`, `description`, `begin_date` as start, `end_date` as end, `begin_hour`, `end_hour`, `is_active`, `users_id`, `locations_id` FROM `events` WHERE is_active = 1 AND locations_id = ?", req.params.locationsid, (err, results) => {
       if (err) {
@@ -31,7 +113,7 @@ router.get("/", (req, res) => {
     });
   });
   
-  router.post("/multiplelocations", (req, res) => {
+  router.post("/events/multiplelocations", (req, res) => {
     if (!req.body.id) res.json("[]")
     else {
     const ids = req.body.id
@@ -50,7 +132,7 @@ router.get("/", (req, res) => {
   });
 
   // Route pour ajouter des événements
-  router.post("/", (req, res) => {
+  router.post("/events", (req, res) => {
     const {
       title,
       description,
@@ -89,7 +171,7 @@ router.get("/", (req, res) => {
   });
   
   //Modification des événements en fonction de l'id
-  router.put("/:id", (req, res) => {
+  router.put("/events/:id", (req, res) => {
     const { id } = req.params;
     const NewEventTitle = req.body.title;
     const NewEventDescription = req.body.description;
@@ -129,7 +211,7 @@ router.get("/", (req, res) => {
   
   // Route pour récupérer les events par id
   
-  router.get("/:id", (req, res) => {
+  router.get("/events/:id", (req, res) => {
     // connection à la base de données
     connection.query(
       "SELECT * from events WHERE id=?",

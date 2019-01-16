@@ -17,7 +17,7 @@ router.post('/', (req, res) => {
         } else {
             if (bcrypt.compareSync(req.body.password, results[0].password)) {
 
-                let token = jwt.sign({ id: 1, username: "admin" }, 'keyboard cat 4 ever', { expiresIn: 129600 }); // Sigining the token
+                let token = jwt.sign({ id: 1, username: "admin" }, process.env.SECRET_KEY_JWT, { expiresIn: 129600 }); // Sigining the token
                 res.json({
                     sucess: true,
                     err: null,
