@@ -25,9 +25,7 @@ router.get('/', (req, res) => {
         if (err) {
           res.status(500).send('Erreur lors de la récuperation des lieux')
         } else {
-          res.json(result)
-          console.log(result);
-          
+          res.json(result)          
         }
       }
     );
