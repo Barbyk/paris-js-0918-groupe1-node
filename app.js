@@ -13,6 +13,9 @@ const events = require("./routes/Events")
 const locations = require("./routes/Locations")
 const news = require("./routes/News")
 const login = require("./routes/Login")
+const publicRoute = require("./routes/PublicRoute")
+const jwt = require("./jwt")
+require('dotenv').config()
 
 // See the react auth blog in which cors is required for access
 app.use((req, res, next) => {
@@ -26,7 +29,7 @@ app.use(cors());
 
 // INstantiating the express-jwt middleware
 const jwtMW = exjwt({
-  secret: 'keyboard cat 4 ever'
+  secret: process.env.SECRET_KEY_JWT
 });
 
 
@@ -44,6 +47,7 @@ app.use(function (err, req, res, next) {
   }
 });
 
+app.use(jwt())
 app.use("/assoProfil", assoProfil)
 app.use("/actions", actions)
 app.use("/login", login)
@@ -51,6 +55,7 @@ app.use("/departements", departements)
 app.use("/events", events)
 app.use("/locations", locations)
 app.use("/news", news)
+app.use("/api", publicRoute)
 
 
 app.listen(port, err => {

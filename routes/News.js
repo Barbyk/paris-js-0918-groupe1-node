@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router()
 const connection = require("../conf");
 
+
 //route news
 router.get('/', (req, res) => {
     connection.query("SELECT * FROM news WHERE is_active=1", (err, results) => {

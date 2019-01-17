@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router()
 const connection = require("../conf");
 
+
 // route Location
   
 router.get('/', (req, res) => {
