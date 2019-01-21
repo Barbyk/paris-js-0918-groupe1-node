@@ -1,5 +1,6 @@
 
 const express = require("express");
+const path = require("path");
 const app = express();
 const port = 3002;
 const connection = require("./conf");
@@ -27,16 +28,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
-// INstantiating the express-jwt middleware
-const jwtMW = exjwt({
-  secret: process.env.SECRET_KEY_JWT
-});
+app.use("/api", publicRoute)
 
-
-app.get('/', jwtMW /* Using the express jwt MW here */, (req, res) => {
-  res.send('You are authenticated'); //Sending some response when authenticated
-});
-
+app.use(jwt())
 // Error handling 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') { // Send the error rather than to show it on the console
@@ -46,8 +40,6 @@ app.use(function (err, req, res, next) {
       next(err);
   }
 });
-
-app.use(jwt())
 app.use("/assoProfil", assoProfil)
 app.use("/actions", actions)
 app.use("/login", login)
@@ -55,7 +47,8 @@ app.use("/departements", departements)
 app.use("/events", events)
 app.use("/locations", locations)
 app.use("/news", news)
-app.use("/api", publicRoute)
+
+
 
 
 app.listen(port, err => {
