@@ -50,7 +50,7 @@ router.get('/assoprofil/filterbydept/:id', (req, res) => {
     new Promise((resolve, reject) => {
   
       // connection à la base de données, et sélection des associations
-      connection.query('SELECT * from assoprofil WHERE departements_id = ?', req.params.id, (err, results) => {
+      connection.query('SELECT * from assoprofil WHERE departements_id = ? AND is_visible = 1', req.params.id, (err, results) => {
   
         if (err) {
   
