@@ -6,6 +6,6 @@ module.exports = jwt;
 function jwt() {
     return expressJwt({
         secret:process.env.SECRET_KEY_JWT}).unless({
-        path:  [/\/api\//i, "/login"]
+        path:  [/\/api\/public\//i]
     });
 }
