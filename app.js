@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
-app.use("/api", publicRoute)
+app.use("/api/public/", publicRoute)
 
 app.use(jwt())
 // Error handling 
@@ -40,16 +40,12 @@ app.use(function (err, req, res, next) {
       next(err);
   }
 });
-app.use("/assoProfil", assoProfil)
-app.use("/actions", actions)
-app.use("/login", login)
-app.use("/departements", departements)
-app.use("/events", events)
-app.use("/locations", locations)
-app.use("/news", news)
-
-
-
+app.use("/api/private/assoProfil", assoProfil)
+app.use("/api/private/actions", actions)
+app.use("/api/private/departements", departements)
+app.use("/api/private/events", events)
+app.use("/api/private/locations", locations)
+app.use("/api/private/news", news)
 
 app.listen(port, err => {
   if (err) {
